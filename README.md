@@ -1,18 +1,3 @@
-# sinatra-template
+A website that prompts the user to guess the age of randomly-selected US-based celebrities. A correct guess is worth 10 points. One point is deducted for each year the guess is off by (i.e. a guess of 53 for a 55-year-old celebrity is worth 10 - (55 - 53) == 8 points.)
 
-Use this repository to create new Sinatra apps. 
-
-Optionally, to use `ActiveRecord` for database operations, add to the `app.rb`:
-
-```ruby
-require "sinatra/activerecord"
-```
-
-And in the `config/environment.rb` file add this code block:
-
-```ruby
-configure do
-  # setup a database connection
-  set(:database, { adapter: "sqlite3", database: "db/development.sqlite3" })
-end
-```
+Includes custom CSS styling and an API call (to Wikipedia for the celebrity's date of birth).
