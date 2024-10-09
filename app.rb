@@ -3,26 +3,46 @@ require "sinatra/reloader"
 require "http"
 require "json"
 require "nokogiri"
+require "openai"
 
 get("/") do
-  "
-  <h1>Welcome to your Sinatra App!</h1>
-  <p>Define some routes in app.rb</p>
-  "
-  url = "https://en.wikipedia.org/w/api.php?action=parse&page=Tom%20Cruise&format=json"
+  erb(:form)
+end
+
+get("/test") do
+  title = params.fetch("article_title")
+  formatted_title = title.gsub(" ", "%20")
+  url = "https://en.wikipedia.org/w/api.php?action=parse&page=#{formatted_title}&format=json"
   http_response = HTTP.get(url)
   parsed_response = JSON.parse(http_response)
   parse = parsed_response.fetch("parse")
   text = parse.fetch("text")
-  @star_text = text.fetch("*")
-  splits = @star_text.split
-  splits.length.times do |num| #this is awful...I'd much rather get Nokogiri to work
-    if splits[num].include? "age&#160;"
-      @age = splits[num].to_s
-    end
-  end
-  #parsed_text = Nokogiri::HTML(star_text)
-  #@age = parsed_text.at('span class=\"bday\"').text #getting errors for diff search strings
-  #puts @age
+  star_text = text.fetch("*")
+
+  parsed_text = Nokogiri::HTML(@star_text)
+  p_text = parsed_text.search('p')
+  first_p = p_text.slice(1)
+
+  client = OpenAI::Client.new(access_token: ENV.fetch("OPEN_AI_KEY"))
+  message_list = [
+    {
+      "role" => "system",
+      "content" => "You are a helpful assistant who can turn any text into a Shakespearean sonnet."
+    },
+    {
+      "role" => "user",
+      "content" => "#{first_p}"
+    }
+  ]
+
+  api_response = client.chat(
+    parameters: {
+    model: "gpt-3.5-turbo",
+    messages: message_list
+    }
+  )
+
+  @sonnet = api_response["choices"][0]["message"]["content"]
+
   erb(:test)
 end

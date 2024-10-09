@@ -7,6 +7,7 @@ gem "sinatra"
 gem "sinatra-contrib"
 gem "http"
 gem "json"
+gem "openai"
 
 # Use Puma as the app server
 gem "puma", "~> 5.0"
