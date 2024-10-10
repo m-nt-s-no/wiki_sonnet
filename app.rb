@@ -19,19 +19,19 @@ get("/test") do
   text = parse.fetch("text")
   star_text = text.fetch("*")
 
-  parsed_text = Nokogiri::HTML(@star_text)
+  parsed_text = Nokogiri::HTML(star_text)
   p_text = parsed_text.search('p')
   first_p = p_text.slice(1)
 
-  client = OpenAI::Client.new(access_token: ENV.fetch("OPEN_AI_KEY"))
+  client = OpenAI::Client.new(access_token: ENV.fetch("MY_TEST_KEY"))
   message_list = [
     {
       "role" => "system",
-      "content" => "You are a helpful assistant who can turn any text into a Shakespearean sonnet."
+      "content" => "You are one of the wittiest and most inventive poets in the English language, who can turn any text into a Shakespearean sonnet."
     },
     {
       "role" => "user",
-      "content" => "#{first_p}"
+      "content" => "Please turn this text into a sonnet: #{first_p}. Ignore any text that appears between angle brackets (< and >), like <a> or </a>."
     }
   ]
 
